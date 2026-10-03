@@ -200,6 +200,8 @@ def hero() -> None:
         f'<stop offset="1" stop-color="{G["night"]}" stop-opacity=".72"/></radialGradient>'
         f'<radialGradient id="vig" r="72%"><stop offset=".35" stop-color="{WITCH["deep"]}" stop-opacity="0"/>'
         f'<stop offset="1" stop-color="{WITCH["deep"]}" stop-opacity=".95"/></radialGradient>'
+        f'<radialGradient id="beatg" r="70%"><stop offset=".45" stop-color="{WITCH["haze"]}" stop-opacity="0"/>'
+        f'<stop offset="1" stop-color="{WITCH["rim"]}" stop-opacity=".55"/></radialGradient>'
         '<linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbffe8"/>'
         f'<stop offset=".55" stop-color="#e9efc4"/><stop offset="1" stop-color="{G["acid"]}"/></linearGradient>'
         f'<linearGradient id="bar" x1="0" x2="1"><stop offset="0" stop-color="{G["neon"]}"/><stop offset="1" stop-color="{G["acid"]}"/></linearGradient>'
@@ -273,7 +275,21 @@ def hero() -> None:
 .vig{{opacity:0;animation:vig {T}s infinite}}
 @keyframes vig{{0%,{DIE - .3}%{{opacity:0}}{DIE + 1}%{{opacity:1}}{BACK - 3}%{{opacity:.75}}{BACK}%,100%{{opacity:0}}}}
 .dread{{opacity:0;animation:dread {T}s infinite}}
-@keyframes dread{{0%,{DIE - .5}%{{opacity:0}}{DIE + 1.5}%{{opacity:.62}}{BACK - 3}%{{opacity:.5}}{BACK}%,100%{{opacity:0}}}}
+@keyframes dread{{0%,{DIE - .5}%{{opacity:0}}{DIE + 1}%{{opacity:.86}}{DIE + 2}%{{opacity:.6}}{DIE + 2.6}%{{opacity:.9}}
+{DIE + 5}%{{opacity:.78}}{DIE + 5.5}%{{opacity:.92}}{DIE + 9}%{{opacity:.8}}{DIE + 9.4}%{{opacity:.55}}{DIE + 10}%{{opacity:.88}}
+{BACK - 3}%{{opacity:.8}}{BACK}%,100%{{opacity:0}}}}
+.fog{{opacity:0;animation:fog {T}s infinite}}
+@keyframes fog{{0%,{DIE - 1}%{{opacity:0;transform:translateY(60px)}}{DIE + 4}%{{opacity:.9;transform:translateY(8px)}}
+{BACK - 3}%{{opacity:1;transform:translateY(-14px)}}{BACK}%,100%{{opacity:0;transform:translateY(-20px)}}}}
+.fog.s{{animation-name:fogs}}
+@keyframes fogs{{0%,{DIE - 1}%{{opacity:0;transform:scaleX(.4)}}{DIE + 5}%{{opacity:.85;transform:scaleX(1)}}
+{BACK - 3}%{{opacity:.95;transform:scaleX(1.12)}}{BACK}%,100%{{opacity:0;transform:scaleX(1.2)}}}}
+.whis{{opacity:0;animation:whis {T}s infinite}}
+@keyframes whis{{0%,{DIE + 1}%{{opacity:0}}{DIE + 2}%{{opacity:var(--o)}}{DIE + 3}%{{opacity:0}}{DIE + 4.5}%{{opacity:var(--o)}}
+{DIE + 7}%{{opacity:calc(var(--o) * .4)}}{DIE + 8}%{{opacity:var(--o)}}{BACK - 2}%{{opacity:var(--o)}}{BACK}%,100%{{opacity:0}}}}
+.beat{{opacity:0;animation:beat {T}s infinite}}
+@keyframes beat{{0%,{DIE}%{{opacity:0}}{DIE + 1}%{{opacity:1}}{DIE + 2.5}%{{opacity:.35}}{DIE + 3.2}%{{opacity:.9}}{DIE + 5}%{{opacity:.3}}
+{DIE + 7}%{{opacity:1}}{DIE + 8.5}%{{opacity:.35}}{DIE + 9.2}%{{opacity:.9}}{DIE + 11}%{{opacity:.3}}{BACK - 2}%{{opacity:.8}}{BACK}%,100%{{opacity:0}}}}
 .rew{{opacity:0;animation:rew {T}s infinite}}
 @keyframes rew{{0%,{DIE + 3}%{{opacity:0}}{DIE + 4}%,{BACK - 1}%{{opacity:1}}{BACK}%,100%{{opacity:0}}}}
 .white{{opacity:0;animation:white {T}s infinite}}
@@ -399,6 +415,20 @@ def hero() -> None:
     b(f'<rect width="{W}" height="{H}" fill="{WITCH["dread"]}" class="dread"/>')
     b(f'<rect width="{W}" height="{H}" fill="{WITCH["haze"]}" class="flash"/>')
     b(f'<rect width="{W}" height="{H}" fill="url(#vig)" class="vig"/>')
+    b(f'<rect width="{W}" height="{H}" fill="url(#beatg)" class="beat"/>')
+    # miasma rolls up from the floor and creeps in from both sides
+    d.defs.append('<filter id="fogf" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="26"/></filter>')
+    fog = "".join(f'<ellipse cx="{fx}" cy="{H + 20}" rx="{rx}" ry="{ry}" fill="{c}" fill-opacity="{o}"/>'
+                  for fx, rx, ry, c, o in ((120, 230, 110, WITCH["haze"], .75), (420, 260, 90, WITCH["deep"], .9),
+                                           (700, 240, 110, WITCH["haze"], .7), (950, 220, 120, WITCH["deep"], .9)))
+    b(f'<g filter="url(#fogf)"><g class="fog">{fog}</g>'
+      f'<g class="fog s" style="transform-origin:0 {H / 2}px"><ellipse cx="-20" cy="{H / 2}" rx="150" ry="230" fill="{WITCH["haze"]}" fill-opacity=".6"/></g>'
+      f'<g class="fog s" style="transform-origin:{W}px {H / 2}px"><ellipse cx="{W + 20}" cy="{H / 2}" rx="150" ry="230" fill="{WITCH["haze"]}" fill-opacity=".6"/></g></g>')
+    # the Witch's whisper, flickering in the dark
+    for wx, wy, ws, wr, wo in ((330, 70, 15, -8, .55), (560, 330, 13, 6, .45), (790, 120, 18, -4, .5),
+                               (120, 300, 12, 10, .4), (880, 250, 14, -12, .45), (470, 40, 11, 3, .35)):
+        b(f'<g class="whis" style="--o:{wo};animation-delay:{(wx % 7) * .04:.2f}s" transform="rotate({wr} {wx} {wy})">'
+          + d.text("愛してる", wx, wy, ws, "brush", "middle", attrs=fill(WITCH["glow"])) + "</g>")
 
     # The Witch's Unseen Hands reach in from the card's edges toward the clock and
     # the name: solid silhouettes with clawed fingers, a violet rim and miasma.
