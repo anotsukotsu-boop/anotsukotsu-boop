@@ -501,7 +501,7 @@ def divider(tone: str = "dark") -> None:
 # =========================================================== SECTION HEADERS
 def header(file: str, num: str, jp: str, title: str, tone: str = "dark") -> None:
     ink = INK[tone]
-    W, H = 1000, 96
+    W, H = 1000, 66
     rng = random.Random(len(title))
     d = Doc(W, H, title.title(), f"Section title: {title}")
     size, ls, hs, gap = 26, 6, 40, 20
@@ -516,9 +516,9 @@ def header(file: str, num: str, jp: str, title: str, tone: str = "dark") -> None
         f'<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="{tw + 300:.0f} 0" dur="6s" repeatCount="indefinite"/>'
         "</linearGradient>"
         f'<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}">'
-        + d.text(title, tx, 70, size, "serif", ls=ls, attrs=' fill="#fff"') + "</mask>"
+        + d.text(title, tx, 46, size, "serif", ls=ls, attrs=' fill="#fff"') + "</mask>"
         + rough_filter("rough", 1.6)
-        + f'<clipPath id="u"><rect x="{tx}" y="74" width="0" height="12">'
+        + f'<clipPath id="u"><rect x="{tx}" y="50" width="0" height="12">'
           f'<animate attributeName="width" from="0" to="{tw + 30:.0f}" begin=".7s" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".3 0 .2 1"/></rect></clipPath>'
     )
     d.css.append(
@@ -534,14 +534,14 @@ def header(file: str, num: str, jp: str, title: str, tone: str = "dark") -> None
 """
     )
     b = d.body.append
-    b(f'<g transform="translate({x0 + hs / 2:.1f} 56) rotate(-4)"><g class="seal"><g filter="url(#rough)">{seal(d, num, hs)}</g></g></g>')
-    b(d.text(jp, tx, 38, 12.5, "serif-md", ls=5, attrs=f' class="jp"{fill(C["shu"])}',
+    b(f'<g transform="translate({x0 + hs / 2:.1f} 33) rotate(-4)"><g class="seal"><g filter="url(#rough)">{seal(d, num, hs)}</g></g></g>')
+    b(d.text(jp, tx, 16, 12.5, "serif-md", ls=5, attrs=f' class="jp"{fill(C["shu"])}',
              char_attrs=lambda i, ch: f' style="animation-delay:{.3 + i * .06:.2f}s"'))
-    b(d.text(title, tx, 70, size, "serif", ls=ls,
+    b(d.text(title, tx, 46, size, "serif", ls=ls,
              attrs=f' class="st" fill="none" stroke="{ink["mid"]}" stroke-width="{.9 / k:.0f}"',
              char_attrs=lambda i, ch: f' style="animation-delay:{i * .05:.2f}s"'))
-    b(f'<g mask="url(#m)" class="fill"><rect x="0" y="30" width="{W}" height="50" fill="url(#g)"/></g>')
-    b(f'<g clip-path="url(#u)"><path d="{brush(rng, tx, tx + tw + 24, 80, 3.4)}" fill="{C["shu"]}" opacity=".9"/></g>')
+    b(f'<g mask="url(#m)" class="fill"><rect x="0" y="6" width="{W}" height="50" fill="url(#g)"/></g>')
+    b(f'<g clip-path="url(#u)"><path d="{brush(rng, tx, tx + tw + 24, 56, 3.4)}" fill="{C["shu"]}" opacity=".9"/></g>')
     d.save(file if tone == "dark" else file.replace(".svg", "-light.svg"))
 
 
@@ -572,7 +572,7 @@ FLESH = {(r, c) for r in range(16) for c in range(16)
 
 def terminal(tone: str = "dark") -> None:
     p = TONE[tone]
-    W, H, T = 1000, 480, 18.0
+    W, H, T = 1000, 340, 18.0
     DIE, CLEAR = 15.2, 17.2
     d = Doc(W, H, "neofetch — bintang@lugunica", "An animated terminal typing out a neofetch profile beside a pixel-art ringa apple.")
     P = lambda t: pct(t, T)
@@ -607,19 +607,19 @@ def terminal(tone: str = "dark") -> None:
     # a sakura bough leaning in from the right, two chōchin hanging off the rule
     srng = random.Random(31)
     b(f'<g class="sway" style="transform-origin:{W + 10}px 50px">'
-      + sakura_branch(srng, W + 10, 50, 162, 150, p["wood"], p["bloom"], p["core"], depth=2, width=6) + "</g>")
+      + sakura_branch(srng, W + 10, 50, 160, 130, p["wood"], p["bloom"], p["core"], depth=2, width=6) + "</g>")
     b(lantern(d, 902, 44, 46, "昴", p["shu"], p["sumi"], p["sumi"], cord=24))
-    b(lantern(d, 956, 44, 38, "戻", p["shu"], p["sumi"], p["sumi"], cord=56))
+    b(lantern(d, 956, 44, 36, "戻", p["shu"], p["sumi"], p["sumi"], cord=44))
     b(petals(srng, 9, W, H, p["bloom"]))
     # 青海波 waves rolling along the bottom edge
     d.defs.append(f'<linearGradient id="sgf" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/>'
                   f'<stop offset=".2" stop-color="#fff"/><stop offset=".8" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
-                  f'<mask id="sgm" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}"><rect y="420" width="{W}" height="60" fill="url(#sgf)"/></mask>')
-    b(f'<g mask="url(#sgm)" opacity=".75"><g class="drift" style="--d:-28px;animation-duration:4s">'
-      + seigaiha(d, 0, 452, W + 40, 4, 14, p["rule"], p["page"]) + "</g></g>")
+                  f'<mask id="sgm" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}"><rect y="{H - 34}" width="{W}" height="34" fill="url(#sgf)"/></mask>')
+    b(f'<g mask="url(#sgm)" opacity=".75"><g class="drift" style="--d:-24px;animation-duration:4s">'
+      + seigaiha(d, 0, H - 14, W + 40, 3, 12, p["rule"], p["page"]) + "</g></g>")
 
     rng = random.Random(3)
-    PX, AX, AY = 12, 58, 84
+    PX, AX, AY = 9, 74, 66
     cols = {"R": "#d93a2b", "H": "#f28b6e", "D": "#8f2217", "S": "#6b4423", "L": "#7d9a4a"}
     b(f'<ellipse cx="{AX + 8 * PX}" cy="{AY + 16 * PX + 22}" rx="70" ry="7" fill="#000" opacity="{p["shadow"]}" class="shadow"/>')
     b('<g class="bob">')
@@ -637,12 +637,12 @@ def terminal(tone: str = "dark") -> None:
     for dx, dy in ((34, -26), (46, 4), (28, 30)):
         b(f'<rect x="{AX + 13 * PX}" y="{AY + 7 * PX}" width="5" height="5" fill="#f3e3b5" class="crumb" style="--dx:{dx}px;--dy:{dy}px"/>')
     b("</g>")
-    b(stars(rng, 14, 280, 320))
-    b(d.text("リンガ · ringa.png", AX + 8 * PX, 336, 12, "mono-b", "middle", attrs=fill(p["ink"])))
-    b(d.text("fig.1 — where every loop begins", AX + 8 * PX, 356, 10, "mono", "middle", attrs=fill(p["dim"])))
-    b(f'<line x1="292" y1="66" x2="292" y2="420" stroke="{p["rule"]}" stroke-dasharray="3 5"/>')
+    b(stars(rng, 14, 280, 260))
+    b(d.text("リンガ · ringa.png", AX + 8 * PX, 254, 11.5, "mono-b", "middle", attrs=fill(p["ink"])))
+    b(d.text("fig.1 — where every loop begins", AX + 8 * PX, 272, 9.5, "mono", "middle", attrs=fill(p["dim"])))
+    b(f'<line x1="292" y1="58" x2="292" y2="{H - 30}" stroke="{p["rule"]}" stroke-dasharray="3 5"/>')
 
-    X0, Y0, LH, FS = 318, 80, 23.5, 13.5
+    X0, Y0, LH, FS = 318, 70, 19.5, 12.5
     cw = FS * 0.6
     b('<g class="jit">')
     lines = []
@@ -661,10 +661,7 @@ def terminal(tone: str = "dark") -> None:
     cmd = "neofetch --loop"
     lines.append((Y0, d.text(cmd, cmd_x, Y0, FS, "mono", attrs=fill(p["ink"])), len(cmd), cmd_x, 0.5, 0.07))
     t = 0.5 + len(cmd) * 0.07 + 0.35
-    y = Y0 + LH
-    lines.append((y, d.text("bintang@lugunica", X0, y, FS, "mono-b", attrs=fill(p["neon"])), 16, X0, t, 0.012))
-    y += LH
-    lines.append((y, d.text("─" * 16, X0, y, FS, "mono", attrs=fill(p["dim"])), 16, X0, t + .12, 0.012))
+    y = Y0
     for i, (key, val) in enumerate(NEOFETCH):
         y += LH
         mk = d.text(key, X0, y, FS, "mono-b", attrs=fill(p["acid"])) + d.text(val, X0 + 11 * cw, y, FS, "mono", attrs=fill(p["ink"]))
@@ -709,14 +706,15 @@ def terminal(tone: str = "dark") -> None:
       f'<animate attributeName="x" dur="{T}s" repeatCount="indefinite" calcMode="discrete" keyTimes="{kt}" values="{xs}"/>'
       f'<animate attributeName="y" dur="{T}s" repeatCount="indefinite" calcMode="discrete" keyTimes="{kty}" values="{ys}"/></rect>')
     b("</g>")
-    b(f'<g class="ghost">{d.text("死に戻り", 640, 280, 120, "brush", "middle", attrs=fill(p["shu"]))}</g>')
+    b(f'<g class="ghost">{d.text("死に戻り", 640, 220, 96, "brush", "middle", attrs=fill(p["shu"]))}</g>')
     d.save(out_name("terminal.svg", tone))
 
 
 # ==================================================================== SINS
 def sins(tone: str = "dark") -> None:
     p = TONE[tone]
-    W, H, T = 1000, 500, 12.0
+    W, H, T = 1000, 330, 12.0
+    RH, TOP = 38, 46  # row height, first row's top
     rng = random.Random(7)
     d = Doc(W, H, "Witch Cult Archive — skill levels",
             "The seven sins of the Witch Cult in kanji, each painted as a brush-stroke skill level.")
@@ -745,50 +743,50 @@ def sins(tone: str = "dark") -> None:
                   '<stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'
                   f'<mask id="asam" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}"><rect width="{W}" height="{H}" fill="url(#asaf)"/></mask>')
     b(f'<g mask="url(#asam)"><rect width="{W}" height="{H}" fill="url(#asa)"/></g>')
-    b(d.text("魔", 890, 470, 300, "brush", "middle", attrs=f'{fill(p["neon"])} fill-opacity="{p["ghost"] / 4}"'))
+    b(d.text("魔", 890, 310, 220, "brush", "middle", attrs=f'{fill(p["neon"])} fill-opacity="{p["ghost"] / 4}"'))
     b(stars(rng, 30, W, H))
     b(petals(rng, 8, W, H, p["petals"]))
-    b(d.text("大罪司教  ·  ARCHBISHOPS OF THE SEVEN SINS", 32, 40, 10.5, "mono", ls=2, attrs=fill(p["dim"])))
-    b(d.text("魔女教  ·  CLASSIFIED", 968, 40, 10.5, "mono", "end", ls=2, attrs=fill(p["shu"])))
-    b(f'<line x1="32" y1="54" x2="968" y2="54" stroke="{p["rule"]}"/>')
+    b(d.text("大罪司教  ·  ARCHBISHOPS OF THE SEVEN SINS", 32, 24, 10, "mono", ls=2, attrs=fill(p["dim"])))
+    b(d.text("魔女教  ·  CLASSIFIED", 968, 24, 10, "mono", "end", ls=2, attrs=fill(p["shu"])))
+    b(f'<line x1="32" y1="36" x2="968" y2="36" stroke="{p["rule"]}"/>')
 
-    BX, BW = 330, 520
+    BX, BW = 300, 560
     for r, (kanji, sin, _c, skill, lvl, flavour) in enumerate(SINS):
         col = p["sin"][sin]
-        yc = 70 + r * 58 + 29
+        yc = TOP + r * RH + RH / 2
         envy = sin == "ENVY"
         t0 = .3 + r * .2
         if r:
-            b(f'<line x1="32" y1="{yc - 29}" x2="968" y2="{yc - 29}" stroke="{p["rule"]}" stroke-opacity=".5"/>')
+            b(f'<line x1="32" y1="{yc - RH / 2}" x2="968" y2="{yc - RH / 2}" stroke="{p["rule"]}" stroke-opacity=".5"/>')
         kcls = "kj" + (" envk" if envy else "")
         # each sin's kanji is brushed on a paper ofuda talisman, its colour on the tab
         b(f'<g class="kj" style="animation-delay:{t0:.2f}s"><g class="ofuda" style="--a:{(-1.6 if r % 2 else 1.4):.1f}deg;animation-delay:-{r * .7:.1f}s">'
-          f'<rect x="26" y="{yc - 22}" width="70" height="42" rx="2" fill="{p["paper"]}" stroke="{p["rule"]}"/>'
-          f'<rect x="30" y="{yc - 18}" width="62" height="34" fill="none" stroke="{p["shu"]}" stroke-opacity=".75" stroke-width=".9"/>'
-          f'<rect x="26" y="{yc - 22}" width="5" height="42" fill="{col}"/>'
-          f'<circle cx="86" cy="{yc - 12}" r="3.2" fill="{p["shu"]}" fill-opacity=".85"/>'
-          f'<g class="{kcls}" style="animation-delay:{t0:.2f}s">{d.text(kanji, 61, yc + 9, 25, "brush", "middle", attrs=fill(p["sumi"]))}</g></g></g>')
-        b(d.text(sin, 104, yc - 3, 12, "serif", ls=2.5, attrs=fill(col) + (' class="flick"' if envy else "")))
+          f'<rect x="28" y="{yc - 15}" width="58" height="30" rx="2" fill="{p["paper"]}" stroke="{p["rule"]}"/>'
+          f'<rect x="31" y="{yc - 12}" width="52" height="24" fill="none" stroke="{p["shu"]}" stroke-opacity=".75" stroke-width=".8"/>'
+          f'<rect x="28" y="{yc - 15}" width="4" height="30" fill="{col}"/>'
+          f'<circle cx="79" cy="{yc - 8}" r="2.4" fill="{p["shu"]}" fill-opacity=".85"/>'
+          f'<g class="{kcls}" style="animation-delay:{t0:.2f}s">{d.text(kanji, 58, yc + 7, 19, "brush", "middle", attrs=fill(p["sumi"]))}</g></g></g>')
+        b(d.text(sin, 98, yc - 2, 11, "serif", ls=2.5, attrs=fill(col) + (' class="flick"' if envy else "")))
         if envy:
-            b(f'<g class="env-a">{d.text(skill, 104, yc + 15, 12, "mono", attrs=fill(p["ink"]))}</g>')
-            b(f'<g class="env-b">{d.text("█" * len(skill), 104, yc + 15, 12, "mono", attrs=fill(p["track"]))}</g>')
+            b(f'<g class="env-a">{d.text(skill, 98, yc + 12, 10.5, "mono", attrs=fill(p["ink"]))}</g>')
+            b(f'<g class="env-b">{d.text("█" * len(skill), 98, yc + 12, 10.5, "mono", attrs=fill(p["track"]))}</g>')
         else:
-            b(d.text(skill, 104, yc + 15, 12, "mono", attrs=fill(p["ink"])))
-        b(f'<path d="{brush(rng, BX, BX + BW, yc - 5, 12)}" fill="{p["track"]}"/>')
+            b(d.text(skill, 98, yc + 12, 10.5, "mono", attrs=fill(p["ink"])))
+        b(f'<path d="{brush(rng, BX, BX + BW, yc - 5, 9)}" fill="{p["track"]}"/>')
         lw = BW * lvl / 100
         d.defs.append(
-            f'<clipPath id="bar{r}"><rect x="{BX - 2}" y="{yc - 16}" width="0" height="24">'
+            f'<clipPath id="bar{r}"><rect x="{BX - 2}" y="{yc - 14}" width="0" height="20">'
             f'<animate attributeName="width" dur="{T}s" repeatCount="indefinite" begin="{t0:.2f}s" calcMode="spline" '
             f'values="0;0;{lw + 4:.0f};{lw + 4:.0f};0;0" keyTimes="0;.01;.13;.9;.95;1" '
             f'keySplines="0 0 1 1;.25 0 .2 1;0 0 1 1;.5 0 .5 1;0 0 1 1"/></rect></clipPath>')
         stroke = f' stroke="{p["shu"]}" stroke-opacity=".7"' if envy else ""
-        b(f'<g clip-path="url(#bar{r})"><path d="{brush(rng, BX, BX + lw, yc - 5, 13)}" fill="{p["track"] if envy else col}"{stroke}'
+        b(f'<g clip-path="url(#bar{r})"><path d="{brush(rng, BX, BX + lw, yc - 5, 10)}" fill="{p["track"] if envy else col}"{stroke}'
           + (' class="flick"' if envy else "") + "/></g>")
-        b(d.text(flavour, BX, yc + 20, 10.5, "mono", attrs=fill(p["dim"])))
+        b(d.text(flavour, BX, yc + 14, 9.5, "mono", attrs=fill(p["dim"])))
         dan = KANJI_NUM[lvl // 10] + "段"
         b(f'<g class="lv" style="animation-delay:{1 + t0:.2f}s">'
-          + d.text(dan, 968, yc + 3, 20, "serif", "end", attrs=fill(p["shu"] if envy else col))
-          + d.text(f"LV.{lvl}", 968, yc + 20, 10, "mono", "end", attrs=fill(p["dim"])) + "</g>")
+          + d.text(dan, 968, yc + 2, 16, "serif", "end", attrs=fill(p["shu"] if envy else col))
+          + d.text(f"LV.{lvl}", 968, yc + 15, 9, "mono", "end", attrs=fill(p["dim"])) + "</g>")
     d.save(out_name("sins.svg", tone))
 
 
@@ -813,8 +811,8 @@ def badge(d: Doc, kind: str, col: str) -> str:
 
 def orbit(tone: str = "dark") -> None:
     p = TONE[tone]
-    W, H, T = 1000, 440, 10.0
-    CX, CY = 500, 212
+    W, H, T = 1000, 300, 10.0
+    CX, CY = 500, 150
     d = Doc(W, H, "Spirit contracts — tech stack", "Tech stack seals orbiting a mitsudomoe inside a brushed ensō.")
     rng = random.Random(21)
     d.defs.append(
@@ -844,39 +842,39 @@ def orbit(tone: str = "dark") -> None:
     b = d.body.append
     b(stars(rng, 55, W, H))
     # a full moon over far mountains and a pagoda, clouds drifting across it
-    MX, MY = 875, 92
-    b(f'<circle cx="{MX}" cy="{MY}" r="110" fill="url(#mhalo)" class="halo" style="transform-origin:{MX}px {MY}px"/>')
-    b(f'<circle cx="{MX}" cy="{MY}" r="48" fill="url(#moon)"/>')
+    MX, MY = 890, 62
+    b(f'<circle cx="{MX}" cy="{MY}" r="58" fill="url(#mhalo)" class="halo" style="transform-origin:{MX}px {MY}px"/>')
+    b(f'<circle cx="{MX}" cy="{MY}" r="36" fill="url(#moon)"/>')
     b("".join(f'<circle cx="{MX + dx}" cy="{MY + dy}" r="{cr}" fill="{p["mount"]}" fill-opacity=".12"/>'
-              for dx, dy, cr in ((-14, -8, 9), (12, 10, 6), (-4, 18, 5), (16, -16, 4))))
-    for cy0, cw, dur, delay in ((98, 1.0, 46, 0), (124, .8, 60, 25), (66, .7, 54, 40)):
+              for dx, dy, cr in ((-10, -6, 7), (9, 8, 5), (-3, 14, 4), (12, -12, 3))))
+    for cy0, cw, dur, delay in ((68, .9, 46, 0), (90, .7, 60, 25), (42, .6, 54, 40)):
         cloud = "".join(f'<ellipse cx="{ex * cw:.0f}" cy="{ey}" rx="{erx * cw:.0f}" ry="{ery}" />'
                         for ex, ey, erx, ery in ((0, 0, 60, 9), (-34, -6, 28, 9), (20, -9, 32, 11), (52, -2, 26, 7)))
         b(f'<g filter="url(#cblur)" fill="{p["cloud"]}" fill-opacity=".9"><g class="drift" style="--d:-{W + 300}px;animation-duration:{dur}s;animation-delay:-{delay}s">'
           f'<g transform="translate({W + 120} {cy0})">{cloud}</g></g></g>')
     mrng = random.Random(5)
-    for k, (base, amp, op) in enumerate(((372, 46, .55), (396, 30, .8))):
+    for k, (base, amp, op) in enumerate(((258, 34, .55), (276, 22, .8))):
         pts = [(0, H)] + [(x, base - abs(math.sin(x / (140 - k * 30) + k)) * amp - mrng.uniform(0, 8)) for x in range(0, W + 25, 25)] + [(W, H)]
         b(f'<path d="M{" L".join(f"{x:.0f} {y:.0f}" for x, y in pts)}Z" fill="{p["mount"]}" fill-opacity="{op}"/>')
     # a five-storey pagoda on the near ridge
-    PX0, PY0 = 132, 382
-    pag = [f'<rect x="{PX0 - 1.2}" y="{PY0 - 98}" width="2.4" height="16"/>']
+    PX0, PY0 = 120, 268
+    pag = [f'<rect x="{PX0 - 1.2}" y="{PY0 - 82}" width="2.4" height="14"/>']
     for i in range(5):
-        y = PY0 - i * 17
-        ww = 30 - i * 4
+        y = PY0 - i * 14
+        ww = 26 - i * 3.5
         pag.append(f'<rect x="{PX0 - ww / 2 + 4:.0f}" y="{y - 11}" width="{ww - 8}" height="11"/>'
                    f'<path d="M{PX0 - ww / 2 - 6:.0f} {y - 10}Q{PX0} {y - 17} {PX0 + ww / 2 + 6:.0f} {y - 10}L{PX0 + ww / 2 - 2:.0f} {y - 14}H{PX0 - ww / 2 + 2:.0f}Z"/>')
     b(f'<g fill="{p["rule"]}">{"".join(pag)}</g>')
     brng = random.Random(44)
-    b(f'<g class="sway" style="transform-origin:-10px 70px">'
-      + sakura_branch(brng, -10, 70, 12, 150, p["wood"], p["bloom"], p["core"], depth=2, width=6) + "</g>")
+    b(f'<g class="sway" style="transform-origin:-10px 46px">'
+      + sakura_branch(brng, -10, 46, 12, 120, p["wood"], p["bloom"], p["core"], depth=2, width=6) + "</g>")
     b(petals(rng, 10, W, H, p["petals"]))
     b(petals(brng, 8, W, H, p["bloom"]))
     n_sp = len(INNER_SPIRITS) + len(OUTER_SPIRITS)
     b(d.text(f"精霊術  ·  SPIRIT ARTS  ·  {KANJI_NUM[n_sp]}体契約  ·  {n_sp} SPIRITS BOUND",
-             CX, 40, 10.5, "mono", "middle", ls=2, attrs=fill(p["dim"])))
+             CX, 24, 10, "mono", "middle", ls=2, attrs=fill(p["dim"])))
 
-    orbits = [(255, 72, 28, True, INNER_SPIRITS, p["seal-a"]), (420, 138, 42, False, OUTER_SPIRITS, p["seal-b"])]
+    orbits = [(240, 50, 28, True, INNER_SPIRITS, p["seal-a"]), (420, 96, 42, False, OUTER_SPIRITS, p["seal-b"])]
 
     def ellipse_path(rx: float, ry: float, cw: bool) -> str:
         s = 1 if cw else 0
@@ -918,30 +916,30 @@ def orbit(tone: str = "dark") -> None:
 
     b(chips(front=False))
     # the centre: a brushed ensō around a turning mitsudomoe
-    b(f'<circle cx="{CX}" cy="{CY}" r="150" fill="url(#halo)" class="halo"/>')
-    R = 80
+    b(f'<circle cx="{CX}" cy="{CY}" r="110" fill="url(#halo)" class="halo"/>')
+    R = 58
     sx, sy = polar(CX, CY, R, 215)
     ex, ey = polar(CX, CY, R, 215 + 335)
     arc = f"M{sx:.1f} {sy:.1f}A{R} {R} 0 1 1 {ex:.1f} {ey:.1f}"
     d.defs.append(
         f'<mask id="em" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}">'
-        f'<path d="{arc}" pathLength="1" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round" stroke-dasharray="1 1">'
+        f'<path d="{arc}" pathLength="1" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-dasharray="1 1">'
         f'<animate attributeName="stroke-dashoffset" values="1;0;0" keyTimes="0;.18;1" dur="{T}s" repeatCount="indefinite" '
         f'calcMode="spline" keySplines=".5 0 .3 1;0 0 1 1"/></path></mask>')
     bristles = []
     for i in range(7):
-        rr = R + (i - 3) * 2.6
+        rr = R + (i - 3) * 2
         a0, a1 = polar(CX, CY, rr, 215 + rng.uniform(-3, 3)), polar(CX, CY, rr, 215 + 335 - abs(i - 3) * 6 + rng.uniform(-4, 4))
         dash = f"{rng.uniform(.62, .8):.2f} .02 {rng.uniform(.05, .12):.2f} {rng.uniform(.02, .06):.2f} .06 .1"
         bristles.append(f'<path d="M{a0[0]:.1f} {a0[1]:.1f}A{rr:.1f} {rr:.1f} 0 1 1 {a1[0]:.1f} {a1[1]:.1f}" pathLength="1" fill="none" '
                         f'stroke="{p["ink"]}" stroke-opacity="{rng.uniform(.55, .9):.2f}" stroke-width="{rng.uniform(2.2, 4.2):.1f}" '
                         f'stroke-linecap="round" stroke-dasharray="{dash}"/>')
     b(f'<g class="enso"><g mask="url(#em)">{"".join(bristles)}</g></g>')
-    b(f'<circle cx="{CX}" cy="{CY}" r="50" fill="none" stroke="{p["acid"]}" stroke-opacity=".6"/>')
-    b(f'<circle cx="{CX}" cy="{CY}" r="56" fill="none" stroke="{p["acid"]}" stroke-opacity=".35" stroke-dasharray="1 4" class="spin-r"/>')
-    b(f'<path d="{tomoe(CX, CY, 42)}" fill="{p["neon"]}" class="spin"/>')
+    b(f'<circle cx="{CX}" cy="{CY}" r="37" fill="none" stroke="{p["acid"]}" stroke-opacity=".6"/>')
+    b(f'<circle cx="{CX}" cy="{CY}" r="42" fill="none" stroke="{p["acid"]}" stroke-opacity=".35" stroke-dasharray="1 4" class="spin-r"/>')
+    b(f'<path d="{tomoe(CX, CY, 31)}" fill="{p["neon"]}" class="spin"/>')
     b(chips(front=True))
-    b(d.text("◆  contracted spirits  ·  精霊術師  ·  bound since 2020  ◆", CX, 410, 11, "mono", "middle", ls=1, attrs=fill(p["dim"])))
+    b(d.text("◆  contracted spirits  ·  精霊術師  ·  bound since 2020  ◆", CX, 288, 10, "mono", "middle", ls=1, attrs=fill(p["dim"])))
     d.save(out_name("orbit.svg", tone))
 
 
