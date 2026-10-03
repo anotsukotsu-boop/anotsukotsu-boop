@@ -340,7 +340,7 @@ def _spline(pts: list[tuple[float, float]], n: int) -> list[tuple[float, float]]
 
 def _digit(base: tuple[float, float], ang: float, lens: list[float], w: float, bends: list[float], n: int = 12) -> str:
     """A finger of three phalanges bent at two joints: a smooth centreline, then a
-    width that tapers from the knuckle to a claw-like point."""
+    width that tapers gently from the knuckle to a rounded fingertip."""
     joints = [base]
     x, y = base
     a = ang
@@ -356,13 +356,16 @@ def _digit(base: tuple[float, float], ang: float, lens: list[float], w: float, b
         q, r = c[min(i + 1, n)], c[max(i - 1, 0)]
         dx, dy = q[0] - r[0], q[1] - r[1]
         L = math.hypot(dx, dy) or 1
-        hw = w * (1 - .62 * (i / n) ** 1.6)
+        hw = w * (1 - .3 * (i / n) ** 1.6)
         left.append((p[0] - dy / L * hw, p[1] + dx / L * hw))
         right.append((p[0] + dy / L * hw, p[1] - dx / L * hw))
+    # round cap: a half circle around the last centreline point
     dx, dy = c[-1][0] - c[-2][0], c[-1][1] - c[-2][1]
-    L = math.hypot(dx, dy) or 1
-    tip = (c[-1][0] + dx / L * w * .7, c[-1][1] + dy / L * w * .7)
-    return _smooth_closed(left + [tip] + right[::-1])
+    a0 = math.atan2(dy, dx)
+    hw = w * .7
+    cap = [(c[-1][0] + math.cos(a0 + t) * hw, c[-1][1] + math.sin(a0 + t) * hw)
+           for t in (math.pi / 3, math.pi / 6, 0, -math.pi / 6, -math.pi / 3)]
+    return _smooth_closed(left + cap + right[::-1])
 
 
 def hand(rng: random.Random, grip: float = .6) -> str:
