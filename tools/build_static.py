@@ -17,8 +17,8 @@ import math
 import random
 from pathlib import Path
 
-from svgkit import (ASSETS, C, PETAL_CSS, ROOT, STAR_CSS, WITCH_RIM, Doc, brush, corners, fill, hand, petals, polar,
-                    smil_steps, stars, tomoe)
+from svgkit import (ASSETS, C, LANTERN_GLOW, PETAL_CSS, ROOT, STAR_CSS, SWAY_CSS, WITCH_RIM, Doc, asanoha, brush, corners,
+                    fill, hand, lantern, petals, polar, sakura_branch, seigaiha, smil_steps, stars, tomoe)
 
 # ---------------------------------------------------------------- content
 PROFILE = {
@@ -88,6 +88,8 @@ TONE = {
         "petals": [C["acid"], C["kinari"], C["acid"], C["matcha"]],
         "sin": {"GREED": C["acid"], "PRIDE": C["gin"], "GLUTTONY": C["kaki"], "SLOTH": C["matcha"],
                 "WRATH": C["shu"], "LUST": C["sakura"], "ENVY": "#5d6f66"},
+        "page": "#0d1117", "wood": "#4a3428", "bloom": ["#f4b6c8", "#e8a0b4", "#ffd6e2"], "core": C["shu"],
+        "paper": "#efe6cf", "sumi": "#17110d", "moon": "#f3ecc8", "mount": "#13261f", "cloud": "#1b2b30",
     },
     "light": {
         "ink": "#16231d", "dim": "#5a6b63", "rule": "#c2d0c9", "chip": "#f2f6f1",
@@ -97,6 +99,8 @@ TONE = {
         "petals": ["#8a9a3a", "#9aad a3".replace(" ", ""), "#8a9a3a", "#3f9e5c"],
         "sin": {"GREED": "#8a7a12", "PRIDE": "#5c6b73", "GLUTTONY": "#b2541b", "SLOTH": "#1f8a3f",
                 "WRATH": "#c42a1f", "LUST": "#b8537a", "ENVY": "#78867e"},
+        "page": "#ffffff", "wood": "#5a3d2e", "bloom": ["#e88fa8", "#f2a7bb", "#d97a97"], "core": "#c42a1f",
+        "paper": "#fbf5e4", "sumi": "#1a120d", "moon": "#ecd98a", "mount": "#dbe5df", "cloud": "#eef2ef",
     },
 }
 
@@ -568,11 +572,12 @@ FLESH = {(r, c) for r in range(16) for c in range(16)
 
 def terminal(tone: str = "dark") -> None:
     p = TONE[tone]
-    W, H, T = 1000, 450, 18.0
+    W, H, T = 1000, 480, 18.0
     DIE, CLEAR = 15.2, 17.2
     d = Doc(W, H, "neofetch — bintang@lugunica", "An animated terminal typing out a neofetch profile beside a pixel-art ringa apple.")
     P = lambda t: pct(t, T)
-    d.css.append(STAR_CSS.replace(C["kinari"], p["star"]))
+    d.css.append(STAR_CSS.replace(C["kinari"], p["star"]) + SWAY_CSS + PETAL_CSS)
+    d.defs.append(LANTERN_GLOW)
     d.css.append(
         f"""
 .bob{{animation:bob 3s ease-in-out infinite}}
@@ -599,6 +604,19 @@ def terminal(tone: str = "dark") -> None:
     for x, col in ((38, p["shu"]), (58, p["acid"]), (78, p["neon"])):
         b(f'<rect x="{x - 4.5}" y="21.5" width="9" height="9" fill="{col}" transform="rotate(45 {x} 26)"/>')
     b(d.text("bintang@lugunica: ~/mathers-domain — zsh", 500, 30, 12, "mono", "middle", attrs=fill(p["dim"])))
+    # a sakura bough leaning in from the right, two chōchin hanging off the rule
+    srng = random.Random(31)
+    b(f'<g class="sway" style="transform-origin:{W + 10}px 50px">'
+      + sakura_branch(srng, W + 10, 50, 162, 150, p["wood"], p["bloom"], p["core"], depth=2, width=6) + "</g>")
+    b(lantern(d, 902, 44, 46, "昴", p["shu"], p["sumi"], p["sumi"], cord=24))
+    b(lantern(d, 956, 44, 38, "戻", p["shu"], p["sumi"], p["sumi"], cord=56))
+    b(petals(srng, 9, W, H, p["bloom"]))
+    # 青海波 waves rolling along the bottom edge
+    d.defs.append(f'<linearGradient id="sgf" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/>'
+                  f'<stop offset=".2" stop-color="#fff"/><stop offset=".8" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+                  f'<mask id="sgm" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}"><rect y="420" width="{W}" height="60" fill="url(#sgf)"/></mask>')
+    b(f'<g mask="url(#sgm)" opacity=".75"><g class="drift" style="--d:-28px;animation-duration:4s">'
+      + seigaiha(d, 0, 452, W + 40, 4, 14, p["rule"], p["page"]) + "</g></g>")
 
     rng = random.Random(3)
     PX, AX, AY = 12, 58, 84
@@ -716,10 +734,17 @@ def sins(tone: str = "dark") -> None:
 .flick{{animation:flick 2.3s steps(1,end) infinite}}
 @keyframes flick{{0%,70%{{opacity:1}}72%{{opacity:.2}}74%{{opacity:1}}80%{{opacity:.4}}82%,100%{{opacity:1}}}}
 .envk{{animation:envk 2.3s steps(1,end) infinite}}
-@keyframes envk{{0%,70%{{fill:{p["sin"]["ENVY"]}}}72%{{fill:{p["shu"]}}}76%,100%{{fill:{p["sin"]["ENVY"]}}}}}
+@keyframes envk{{0%,70%{{fill:{p["sumi"]}}}72%{{fill:{p["shu"]}}}76%,100%{{fill:{p["sumi"]}}}}}
+.ofuda{{transform-box:fill-box;transform-origin:50% 0;animation:ofuda 5s ease-in-out infinite}}
+@keyframes ofuda{{0%,100%{{transform:rotate(var(--a))}}50%{{transform:rotate(calc(var(--a) * -1))}}}}
 """
     )
     b = d.body.append
+    asanoha(d, 16, p["rule"])
+    d.defs.append('<radialGradient id="asaf" cx="70%" cy="55%" r="65%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/>'
+                  '<stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'
+                  f'<mask id="asam" maskUnits="userSpaceOnUse" x="0" y="0" width="{W}" height="{H}"><rect width="{W}" height="{H}" fill="url(#asaf)"/></mask>')
+    b(f'<g mask="url(#asam)"><rect width="{W}" height="{H}" fill="url(#asa)"/></g>')
     b(d.text("魔", 890, 470, 300, "brush", "middle", attrs=f'{fill(p["neon"])} fill-opacity="{p["ghost"] / 4}"'))
     b(stars(rng, 30, W, H))
     b(petals(rng, 8, W, H, p["petals"]))
@@ -736,7 +761,13 @@ def sins(tone: str = "dark") -> None:
         if r:
             b(f'<line x1="32" y1="{yc - 29}" x2="968" y2="{yc - 29}" stroke="{p["rule"]}" stroke-opacity=".5"/>')
         kcls = "kj" + (" envk" if envy else "")
-        b(f'<g class="{kcls}" style="animation-delay:{t0:.2f}s">{d.text(kanji, 34, yc + 10, 27, "brush", attrs=fill(col))}</g>')
+        # each sin's kanji is brushed on a paper ofuda talisman, its colour on the tab
+        b(f'<g class="kj" style="animation-delay:{t0:.2f}s"><g class="ofuda" style="--a:{(-1.6 if r % 2 else 1.4):.1f}deg;animation-delay:-{r * .7:.1f}s">'
+          f'<rect x="26" y="{yc - 22}" width="70" height="42" rx="2" fill="{p["paper"]}" stroke="{p["rule"]}"/>'
+          f'<rect x="30" y="{yc - 18}" width="62" height="34" fill="none" stroke="{p["shu"]}" stroke-opacity=".75" stroke-width=".9"/>'
+          f'<rect x="26" y="{yc - 22}" width="5" height="42" fill="{col}"/>'
+          f'<circle cx="86" cy="{yc - 12}" r="3.2" fill="{p["shu"]}" fill-opacity=".85"/>'
+          f'<g class="{kcls}" style="animation-delay:{t0:.2f}s">{d.text(kanji, 61, yc + 9, 25, "brush", "middle", attrs=fill(p["sumi"]))}</g></g></g>')
         b(d.text(sin, 104, yc - 3, 12, "serif", ls=2.5, attrs=fill(col) + (' class="flick"' if envy else "")))
         if envy:
             b(f'<g class="env-a">{d.text(skill, 104, yc + 15, 12, "mono", attrs=fill(p["ink"]))}</g>')
@@ -790,7 +821,12 @@ def orbit(tone: str = "dark") -> None:
         f'<radialGradient id="halo"><stop offset="0" stop-color="{p["neon"]}" stop-opacity=".2"/>'
         f'<stop offset=".45" stop-color="{p["neon"]}" stop-opacity=".06"/><stop offset="1" stop-color="{p["neon"]}" stop-opacity="0"/></radialGradient>'
     )
-    d.css.append(STAR_CSS.replace(C["kinari"], p["star"]) + PETAL_CSS)
+    d.css.append(STAR_CSS.replace(C["kinari"], p["star"]) + PETAL_CSS + SWAY_CSS)
+    d.defs.append(
+        f'<radialGradient id="moon" cx="40%" cy="38%"><stop offset="0" stop-color="#fffdf2"/><stop offset=".7" stop-color="{p["moon"]}"/>'
+        f'<stop offset="1" stop-color="{p["moon"]}" stop-opacity=".85"/></radialGradient>'
+        f'<radialGradient id="mhalo"><stop offset=".35" stop-color="{p["moon"]}" stop-opacity=".35"/><stop offset="1" stop-color="{p["moon"]}" stop-opacity="0"/></radialGradient>'
+        '<filter id="cblur" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>')
     d.css.append(
         f"""
 .halo{{transform-origin:{CX}px {CY}px;animation:halo 5s ease-in-out infinite}}
@@ -807,7 +843,35 @@ def orbit(tone: str = "dark") -> None:
     )
     b = d.body.append
     b(stars(rng, 55, W, H))
+    # a full moon over far mountains and a pagoda, clouds drifting across it
+    MX, MY = 875, 92
+    b(f'<circle cx="{MX}" cy="{MY}" r="110" fill="url(#mhalo)" class="halo" style="transform-origin:{MX}px {MY}px"/>')
+    b(f'<circle cx="{MX}" cy="{MY}" r="48" fill="url(#moon)"/>')
+    b("".join(f'<circle cx="{MX + dx}" cy="{MY + dy}" r="{cr}" fill="{p["mount"]}" fill-opacity=".12"/>'
+              for dx, dy, cr in ((-14, -8, 9), (12, 10, 6), (-4, 18, 5), (16, -16, 4))))
+    for cy0, cw, dur, delay in ((98, 1.0, 46, 0), (124, .8, 60, 25), (66, .7, 54, 40)):
+        cloud = "".join(f'<ellipse cx="{ex * cw:.0f}" cy="{ey}" rx="{erx * cw:.0f}" ry="{ery}" />'
+                        for ex, ey, erx, ery in ((0, 0, 60, 9), (-34, -6, 28, 9), (20, -9, 32, 11), (52, -2, 26, 7)))
+        b(f'<g filter="url(#cblur)" fill="{p["cloud"]}" fill-opacity=".9"><g class="drift" style="--d:-{W + 300}px;animation-duration:{dur}s;animation-delay:-{delay}s">'
+          f'<g transform="translate({W + 120} {cy0})">{cloud}</g></g></g>')
+    mrng = random.Random(5)
+    for k, (base, amp, op) in enumerate(((372, 46, .55), (396, 30, .8))):
+        pts = [(0, H)] + [(x, base - abs(math.sin(x / (140 - k * 30) + k)) * amp - mrng.uniform(0, 8)) for x in range(0, W + 25, 25)] + [(W, H)]
+        b(f'<path d="M{" L".join(f"{x:.0f} {y:.0f}" for x, y in pts)}Z" fill="{p["mount"]}" fill-opacity="{op}"/>')
+    # a five-storey pagoda on the near ridge
+    PX0, PY0 = 132, 382
+    pag = [f'<rect x="{PX0 - 1.2}" y="{PY0 - 98}" width="2.4" height="16"/>']
+    for i in range(5):
+        y = PY0 - i * 17
+        ww = 30 - i * 4
+        pag.append(f'<rect x="{PX0 - ww / 2 + 4:.0f}" y="{y - 11}" width="{ww - 8}" height="11"/>'
+                   f'<path d="M{PX0 - ww / 2 - 6:.0f} {y - 10}Q{PX0} {y - 17} {PX0 + ww / 2 + 6:.0f} {y - 10}L{PX0 + ww / 2 - 2:.0f} {y - 14}H{PX0 - ww / 2 + 2:.0f}Z"/>')
+    b(f'<g fill="{p["rule"]}">{"".join(pag)}</g>')
+    brng = random.Random(44)
+    b(f'<g class="sway" style="transform-origin:-10px 70px">'
+      + sakura_branch(brng, -10, 70, 12, 150, p["wood"], p["bloom"], p["core"], depth=2, width=6) + "</g>")
     b(petals(rng, 10, W, H, p["petals"]))
+    b(petals(brng, 8, W, H, p["bloom"]))
     n_sp = len(INNER_SPIRITS) + len(OUTER_SPIRITS)
     b(d.text(f"精霊術  ·  SPIRIT ARTS  ·  {KANJI_NUM[n_sp]}体契約  ·  {n_sp} SPIRITS BOUND",
              CX, 40, 10.5, "mono", "middle", ls=2, attrs=fill(p["dim"])))

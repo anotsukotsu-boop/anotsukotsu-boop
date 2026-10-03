@@ -416,3 +416,100 @@ def corners(x: float, y: float, w: float, h: float, col: str, n: float = 14, ins
     c, d = x + w - inset, y + h - inset
     p = [f"M{a} {b + n}V{b}H{a + n}", f"M{c - n} {b}H{c}V{b + n}", f"M{c} {d - n}V{d}H{c - n}", f"M{a + n} {d}H{a}V{d - n}"]
     return f'<path d="{"".join(p)}" fill="none" stroke="{col}" stroke-width="1.4"/>'
+
+
+# ------------------------------------------------------------ scenery
+SWAY_CSS = (".sway{animation:sway 7s ease-in-out infinite}"
+            "@keyframes sway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.6deg)}}"
+            ".swing{animation:swing 4.2s ease-in-out infinite}"
+            "@keyframes swing{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}"
+            ".glow{animation:glow 2.6s ease-in-out infinite}"
+            "@keyframes glow{50%{opacity:.45}}"
+            ".drift{animation:drift linear infinite}"
+            "@keyframes drift{from{transform:translateX(0)}to{transform:translateX(var(--d))}}")
+
+
+def blossom(x: float, y: float, s: float, col: str, core: str) -> str:
+    """A five-petal sakura flower centred on (x, y)."""
+    pet = "".join(f'<path d="{PETAL}" transform="rotate({k * 72}) translate(0 -5.4)"/>' for k in range(5))
+    return (f'<g transform="translate({x:.1f} {y:.1f}) scale({s:.2f})" fill="{col}">{pet}'
+            f'<circle r="1.9" fill="{core}"/></g>')
+
+
+def sakura_branch(rng: random.Random, x: float, y: float, ang: float, length: float, wood: str,
+                  bloom: list[str], core: str, depth: int = 3, width: float = 7) -> str:
+    """A bough of brush-stroke wood that forks and ends in clusters of blossoms.
+    Grows from (x, y) along `ang` degrees (0 = right, 90 = down)."""
+    out_wood, out_bloom = [], []
+
+    def grow(x, y, ang, length, width, depth):
+        pts = [(x, y)]
+        a = ang
+        for _ in range(4):
+            a += rng.uniform(-14, 14)
+            r = math.radians(a)
+            x, y = x + math.cos(r) * length / 4, y + math.sin(r) * length / 4
+            pts.append((x, y))
+        d = "M" + " L".join(f"{px:.1f} {py:.1f}" for px, py in pts)
+        out_wood.append(f'<path d="{d}" fill="none" stroke="{wood}" stroke-width="{width:.1f}" '
+                        f'stroke-linecap="round" stroke-linejoin="round"/>')
+        for px, py in pts[2:]:
+            if rng.random() < .55:
+                out_bloom.append(blossom(px + rng.uniform(-6, 6), py + rng.uniform(-6, 6), rng.uniform(.55, .9),
+                                         rng.choice(bloom), core))
+        if depth == 0:
+            for _ in range(3):
+                out_bloom.append(blossom(x + rng.uniform(-10, 10), y + rng.uniform(-10, 10), rng.uniform(.7, 1.05),
+                                         rng.choice(bloom), core))
+            return
+        for k in (-1, 1):
+            if depth < 3 or k == 1 or rng.random() < .8:
+                mid = pts[rng.randint(2, 4)]
+                grow(mid[0], mid[1], a + k * rng.uniform(22, 40), length * rng.uniform(.5, .68), width * .6, depth - 1)
+
+    grow(x, y, ang, length, width, depth)
+    return "".join(out_wood) + "".join(out_bloom)
+
+
+def lantern(d: Doc, x: float, y: float, h: float, ch: str, body: str, ink: str, cap: str, cord: float = 40) -> str:
+    """A red chōchin paper lantern hanging from (x, y) on a cord, swinging, with a soft glow.
+    The group's transform-origin is the hook, so the `swing` class rocks it."""
+    w = h * .72
+    cy = y + cord + h / 2
+    ribs = "".join(f'<path d="M{x - w / 2 + 2:.1f} {cy + h * f:.1f}Q{x:.1f} {cy + h * f + h * .05:.1f} {x + w / 2 - 2:.1f} {cy + h * f:.1f}" '
+                   f'fill="none" stroke="{ink}" stroke-opacity=".28" stroke-width=".8"/>'
+                   for f in (-.32, -.2, -.08, .04, .16, .28))
+    return (f'<g class="swing" style="transform-origin:{x}px {y}px;animation-delay:-{(x % 37) / 10:.1f}s">'
+            f'<line x1="{x}" y1="{y}" x2="{x}" y2="{cy - h / 2}" stroke="{cap}" stroke-width="1.2"/>'
+            f'<ellipse cx="{x}" cy="{cy}" rx="{w * 1.1:.1f}" ry="{h * .9:.1f}" fill="{body}" opacity=".22" class="glow" filter="url(#lglow)"/>'
+            f'<rect x="{x - w * .3:.1f}" y="{cy - h / 2 - 4:.1f}" width="{w * .6:.1f}" height="6" rx="1.5" fill="{cap}"/>'
+            f'<ellipse cx="{x}" cy="{cy}" rx="{w / 2:.1f}" ry="{h / 2:.1f}" fill="{body}"/>'
+            f'<ellipse cx="{x - w * .14:.1f}" cy="{cy - h * .12:.1f}" rx="{w * .16:.1f}" ry="{h * .3:.1f}" fill="#fff" opacity=".14"/>'
+            f'{ribs}'
+            + d.text(ch, x, cy + h * .14, h * .42, "brush", "middle", attrs=fill(ink))
+            + f'<rect x="{x - w * .3:.1f}" y="{cy + h / 2 - 2:.1f}" width="{w * .6:.1f}" height="6" rx="1.5" fill="{cap}"/>'
+            f'<path d="M{x - 3} {cy + h / 2 + 4}h6l-1 {h * .22:.1f}h-4z" fill="{body}" opacity=".8"/></g>')
+
+
+LANTERN_GLOW = '<filter id="lglow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="9"/></filter>'
+
+
+def asanoha(d: Doc, s: float, stroke: str, pid: str = "asa") -> str:
+    """麻の葉 hemp-leaf pattern as a <pattern> id; fill a rect with url(#pid).
+    A triangle grid (side 2s) with each triangle's centre joined to its corners."""
+    h = s * math.sqrt(3)
+    segs = []
+    for row in (0, 1):
+        for k in range(-2, 5):
+            y0, y1 = row * h, (row + 1) * h
+            if (k + row) % 2 == 0:
+                v = [(k * s, y0), ((k + 2) * s, y0), ((k + 1) * s, y1)]
+            else:
+                v = [(k * s, y1), ((k + 2) * s, y1), ((k + 1) * s, y0)]
+            cx, cy = sum(p[0] for p in v) / 3, sum(p[1] for p in v) / 3
+            for i in range(3):
+                segs.append(f"M{v[i][0]:.1f} {v[i][1]:.1f}L{v[(i + 1) % 3][0]:.1f} {v[(i + 1) % 3][1]:.1f}")
+                segs.append(f"M{cx:.1f} {cy:.1f}L{v[i][0]:.1f} {v[i][1]:.1f}")
+    d.defs.append(f'<pattern id="{pid}" width="{2 * s}" height="{2 * h:.2f}" patternUnits="userSpaceOnUse">'
+                  f'<path d="{"".join(segs)}" fill="none" stroke="{stroke}" stroke-width=".7"/></pattern>')
+    return pid
