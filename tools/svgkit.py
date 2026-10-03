@@ -368,11 +368,12 @@ def _digit(base: tuple[float, float], ang: float, lens: list[float], w: float, b
     return _smooth_closed(left + cap + right[::-1])
 
 
-def hand(rng: random.Random, grip: float = .6) -> str:
+def hand(rng: random.Random, grip: float = .6, nudge: dict[int, float] | None = None) -> str:
     """The Witch's Unseen Hand, as in the anime: a solid silhouette with jointed,
     clawed fingers curling to grasp. Local frame: wrist at (0, 0), reaching +x,
     thumb on the -y side, forearm running far back to -x (off-canvas). `grip`
-    (0..1) sets how far the fingers curl. Returns bare <path>s: wrap them in a
+    (0..1) sets how far the fingers curl; `nudge` tilts single fingers (index 0
+    = next to the thumb) by extra degrees, to pull apart a pair that touches. Returns bare <path>s: wrap them in a
     group with a fill and the WITCH_RIM filter, then place it with a transform.
     """
     j = lambda v: v * (1 + rng.uniform(-.06, .06))
@@ -381,9 +382,10 @@ def hand(rng: random.Random, grip: float = .6) -> str:
         _smooth_closed([(0, -14), (16, -19), (40, -21), (52, -13), (55, -1), (52, 12),
                         (44, 21), (24, 19), (0, 14)]),                                              # back of hand
     ]
-    for base, ang, lens, w in (((47, -14), -13, (25, 16, 12), 5.6), ((51, -4), -3, (28, 18, 13), 5.9),
-                               ((50, 6), 7, (26, 17, 12), 5.6), ((44, 15), 18, (20, 13, 10), 4.9)):
-        parts.append(_digit(base, ang + rng.uniform(-3, 3) + 6 * grip, [j(L) for L in lens], w,
+    nudge = nudge or {}
+    for f, (base, ang, lens, w) in enumerate((((47, -14), -13, (25, 16, 12), 5.6), ((51, -4), -3, (28, 18, 13), 5.9),
+                               ((50, 6), 7, (26, 17, 12), 5.6), ((44, 15), 18, (20, 13, 10), 4.9))):
+        parts.append(_digit(base, ang + rng.uniform(-3, 3) + 6 * grip + nudge.get(f, 0), [j(L) for L in lens], w,
                             [j(10 + 34 * grip), j(8 + 26 * grip)]))
     parts.append(_digit((14, -14), -58 + rng.uniform(-4, 4), [18, 14, 10], 6.6,
                         [j(14 + 18 * grip), j(10 + 14 * grip)]))                                   # thumb

@@ -443,6 +443,8 @@ def hero() -> None:
     # trailing the opposite way, straight out through that nearby edge — so a
     # clean stretch of arm is always visible between the wrist and the frame.
     # (wrist x, wrist y, angle, scale, mirrored, grip, reach distance in local units)
+    # (the bottom-centre hand's index and middle fingertips touch, so its index tilts away)
+    nudges = {2: {0: -6}}
     for i, (hx, hy, ang, sc, mir, grip, reach) in enumerate((
             (50, 330, -45, 1.45, False, .5, 110),   # bottom-left corner → up toward the clock
             (42, 110, 0, 1.1, True, .7, 90),        # left edge → right toward the clock/name
@@ -454,7 +456,7 @@ def hero() -> None:
                 f'<ellipse cx="62" cy="0" rx="30" ry="26" fill="{WITCH["rim"]}" opacity=".5"/></g>')
         b(f'<g transform="translate({hx} {hy}) rotate({ang}) scale({sc} {-sc if mir else sc})">'
           f'<g class="wr" style="--r:-{reach}px;animation-delay:{i * .05:.2f}s">{haze}'
-          f'<g filter="url(#wrim)" fill="{WITCH["body"]}">{hand(rng, grip)}</g></g></g>')
+          f'<g filter="url(#wrim)" fill="{WITCH["body"]}">{hand(rng, grip, nudges.get(i))}</g></g></g>')
     b(f'<g class="rew"><rect width="{W}" height="{H}" fill="{G["neon"]}" fill-opacity=".05"/>'
       f'<rect x="22" y="336" width="186" height="26" rx="3" fill="{G["night"]}" fill-opacity=".85" stroke="{G["acid"]}" stroke-opacity=".5"/>'
       + d.text("«« 巻き戻し  REWIND", 34, 354, 12, "mono-b", ls=1.5, attrs=fill("#eef3dc")) + "</g>")
