@@ -65,7 +65,6 @@ HEADERS = {
     "header-archive.svg": ("弐", "魔女教  大罪司教", "WITCH CULT ARCHIVE"),
     "header-spirits.svg": ("参", "精霊術  契約", "SPIRIT CONTRACTS"),
     "header-records.svg": ("肆", "ループ記録", "LOOP RECORDS"),
-    "header-loop.svg": ("伍", "現在のループ", "CURRENT LOOP"),
 }
 
 # Headers and the divider are transparent, so they ship a dark and a light tone

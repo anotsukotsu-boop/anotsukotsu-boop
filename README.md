@@ -56,23 +56,6 @@
 </div>
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="./assets/header-loop-light.svg" />
-  <img src="./assets/header-loop.svg" width="100%" alt="Current Loop" />
-</picture>
-
-<div align="center">
-
-| Loop | Quest | Status |
-| :--: | :-- | :--: |
-| `01` | Kuasai TypeScript *strict mode* | `✓ CLEARED` |
-| `02` | Bangun REST API pakai NestJS | `✓ CLEARED` |
-| `03` | Deep dive *system architecture* | `▶ IN PROGRESS` |
-| `04` | Kontribusi open source pertama | `◇ LOCKED` |
-| `05` | Selesaikan Re:Zero season 3 | `◇ LOCKED` |
-
-</div>
-
-<picture>
   <source media="(prefers-color-scheme: light)" srcset="./assets/divider-light.svg" />
   <img src="./assets/divider.svg" width="100%" alt="" />
 </picture>
