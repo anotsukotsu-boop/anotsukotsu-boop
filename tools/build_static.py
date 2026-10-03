@@ -200,6 +200,10 @@ def hero() -> None:
         f'<stop offset="1" stop-color="{G["night"]}" stop-opacity=".72"/></radialGradient>'
         f'<radialGradient id="vig" r="72%"><stop offset=".35" stop-color="{WITCH["deep"]}" stop-opacity="0"/>'
         f'<stop offset="1" stop-color="{WITCH["deep"]}" stop-opacity=".95"/></radialGradient>'
+        # dark everywhere except a dim pool of light over Subaru on the stairs
+        f'<radialGradient id="dreadg" cx="42%" cy="48%" r="62%"><stop offset="0" stop-color="{WITCH["deep"]}" stop-opacity=".12"/>'
+        f'<stop offset=".32" stop-color="{WITCH["deep"]}" stop-opacity=".3"/><stop offset=".62" stop-color="{WITCH["dread"]}" stop-opacity=".85"/>'
+        f'<stop offset="1" stop-color="{WITCH["dread"]}" stop-opacity="1"/></radialGradient>'
         f'<radialGradient id="beatg" r="70%"><stop offset=".45" stop-color="{WITCH["haze"]}" stop-opacity="0"/>'
         f'<stop offset="1" stop-color="{WITCH["rim"]}" stop-opacity=".55"/></radialGradient>'
         '<linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbffe8"/>'
@@ -412,14 +416,14 @@ def hero() -> None:
 
     # -- death: the Witch's hands, the seal, the rewind ----------------------------------
     # the card sinks into a violet dark while the Witch's hands are out
-    b(f'<rect width="{W}" height="{H}" fill="{WITCH["dread"]}" class="dread"/>')
+    b(f'<rect width="{W}" height="{H}" fill="url(#dreadg)" class="dread"/>')
     b(f'<rect width="{W}" height="{H}" fill="{WITCH["haze"]}" class="flash"/>')
     b(f'<rect width="{W}" height="{H}" fill="url(#vig)" class="vig"/>')
     b(f'<rect width="{W}" height="{H}" fill="url(#beatg)" class="beat"/>')
     # miasma rolls up from the floor and creeps in from both sides
     d.defs.append('<filter id="fogf" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="26"/></filter>')
     fog = "".join(f'<ellipse cx="{fx}" cy="{H + 20}" rx="{rx}" ry="{ry}" fill="{c}" fill-opacity="{o}"/>'
-                  for fx, rx, ry, c, o in ((120, 230, 110, WITCH["haze"], .75), (420, 260, 90, WITCH["deep"], .9),
+                  for fx, rx, ry, c, o in ((120, 230, 110, WITCH["haze"], .75), (420, 200, 60, WITCH["deep"], .45),
                                            (700, 240, 110, WITCH["haze"], .7), (950, 220, 120, WITCH["deep"], .9)))
     b(f'<g filter="url(#fogf)"><g class="fog">{fog}</g>'
       f'<g class="fog s" style="transform-origin:0 {H / 2}px"><ellipse cx="-20" cy="{H / 2}" rx="150" ry="230" fill="{WITCH["haze"]}" fill-opacity=".6"/></g>'
