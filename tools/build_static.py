@@ -4,8 +4,9 @@
     python tools/build_static.py
 
 Art direction: a Japanese night scroll. Sumi ink, vermilion, gold leaf and
-washi cream (no purple), Re:Zero's Return by Death told through a wadokei
-clock over a red moon, falling petals, the Witch's shadow hands and a 死 seal.
+washi cream, Re:Zero's Return by Death told through a wadokei clock over a
+red moon, falling petals, and the Witch's shadow hands, which sink the hero
+into violet dark.
 Edit the content block below to change names, skills or tech.
 """
 
@@ -140,7 +141,7 @@ def seal(d: Doc, ch: str, size: float, key: str = "serif", col: str = C["shu"], 
 BG_WEBP = ASSETS / "bg" / "subaru-stairs.webp"
 BG_VIDEO = ROOT / "rezero-readme" / "assets" / "subaru-stairs_processed.mp4"
 BG_FPS, BG_QUALITY = 12, 40
-WITCH = {"body": "#07030b", "rim": "#a93dff", "haze": "#6a0dad"}
+WITCH = {"body": "#07030b", "rim": "#a93dff", "haze": "#6a0dad", "deep": "#1a0430", "dread": "#06010d", "glow": "#c77dff"}
 GIF_TONE = {"night": C["sumi0"], "neon": C["neon"], "acid": C["acid"], "teal": "#1c5a52", "mist": C["muted"]}
 
 
@@ -180,7 +181,7 @@ def hero() -> None:
     G = GIF_TONE
     rng = random.Random(10)
     d = Doc(W, H, "Bintang Ilham — Return-by-Death Developer",
-            "Subaru climbs an endless staircase behind a ghostly wadokei clock; the Witch's hands rise, a 死 seal lands, time rewinds and the loop counter goes up.")
+            "Subaru climbs an endless staircase behind a ghostly wadokei clock; the Witch's hands rise and the card sinks into violet dark, time rewinds and the loop counter goes up.")
     card(d, 0, 0, W, H)
     d.defs.append(
         '<linearGradient id="shade" x1="0" x2="1">'
@@ -197,8 +198,8 @@ def hero() -> None:
         f'<stop offset=".55" stop-color="{G["neon"]}" stop-opacity=".05"/><stop offset="1" stop-color="{G["neon"]}" stop-opacity="0"/></radialGradient>'
         f'<radialGradient id="face" cx="45%" cy="38%" r="70%"><stop offset="0" stop-color="#0b2420" stop-opacity=".55"/>'
         f'<stop offset="1" stop-color="{G["night"]}" stop-opacity=".72"/></radialGradient>'
-        '<radialGradient id="vig" r="72%"><stop offset=".5" stop-color="#3b0703" stop-opacity="0"/>'
-        '<stop offset="1" stop-color="#3b0703" stop-opacity=".9"/></radialGradient>'
+        f'<radialGradient id="vig" r="72%"><stop offset=".35" stop-color="{WITCH["deep"]}" stop-opacity="0"/>'
+        f'<stop offset="1" stop-color="{WITCH["deep"]}" stop-opacity=".95"/></radialGradient>'
         '<linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbffe8"/>'
         f'<stop offset=".55" stop-color="#e9efc4"/><stop offset="1" stop-color="{G["acid"]}"/></linearGradient>'
         f'<linearGradient id="bar" x1="0" x2="1"><stop offset="0" stop-color="{G["neon"]}"/><stop offset="1" stop-color="{G["acid"]}"/></linearGradient>'
@@ -267,13 +268,12 @@ def hero() -> None:
 @keyframes wr{{0%,{DIE - .5}%{{opacity:0;transform:translateX(var(--r))}}{DIE + 2.5}%{{opacity:1;transform:translateX(6px)}}
 {DIE + 5}%{{transform:translateX(0)}}{DIE + 10}%{{transform:translateX(-5px)}}{BACK - 1}%{{opacity:1;transform:translateX(0)}}
 {BACK + 3}%,100%{{opacity:0;transform:translateX(var(--r))}}}}
-.stamp{{opacity:0;animation:stamp {T}s infinite}}
-@keyframes stamp{{0%,{DIE + .4}%{{opacity:0;transform:scale(2.4)}}{DIE + 1.4}%{{opacity:1;transform:scale(.9)}}
-{DIE + 2.4}%{{transform:scale(1)}}{BACK - 1.5}%{{opacity:1;transform:scale(1)}}{BACK}%,100%{{opacity:0;transform:scale(1.08)}}}}
 .flash{{opacity:0;animation:flash {T}s infinite}}
 @keyframes flash{{0%,{DIE - .3}%{{opacity:0}}{DIE + .3}%{{opacity:.42}}{DIE + 4}%{{opacity:.12}}{BACK - 2}%,100%{{opacity:0}}}}
 .vig{{opacity:0;animation:vig {T}s infinite}}
 @keyframes vig{{0%,{DIE - .3}%{{opacity:0}}{DIE + 1}%{{opacity:1}}{BACK - 3}%{{opacity:.75}}{BACK}%,100%{{opacity:0}}}}
+.dread{{opacity:0;animation:dread {T}s infinite}}
+@keyframes dread{{0%,{DIE - .5}%{{opacity:0}}{DIE + 1.5}%{{opacity:.62}}{BACK - 3}%{{opacity:.5}}{BACK}%,100%{{opacity:0}}}}
 .rew{{opacity:0;animation:rew {T}s infinite}}
 @keyframes rew{{0%,{DIE + 3}%{{opacity:0}}{DIE + 4}%,{BACK - 1}%{{opacity:1}}{BACK}%,100%{{opacity:0}}}}
 .white{{opacity:0;animation:white {T}s infinite}}
@@ -332,7 +332,7 @@ def hero() -> None:
     b(d.text(PROFILE["tag"], NX, 72, 10.5, "mono", ls=2.2, attrs=fill("#b4c9bd")))
     b(d.text(PROFILE["kana"], NX, 108, 17, "serif", ls=7, attrs=f' class="kana"{fill(G["acid"])}',
              char_attrs=lambda i, ch: f' style="animation-delay:{.1 + i * .07:.2f}s"'))
-    b(d.text(PROFILE["name"], NX, NY, size, "serif", ls=4, attrs=f' class="gl"{fill(C["shu"])}'))
+    b(d.text(PROFILE["name"], NX, NY, size, "serif", ls=4, attrs=f' class="gl"{fill(WITCH["rim"])}'))
     b(d.text(PROFILE["name"], NX, NY, size, "serif", ls=4, attrs=f' class="gl b"{fill(G["neon"])}'))
     b(d.text(PROFILE["name"], NX, NY, size, "serif", ls=4,
              attrs=f' class="nm" fill="url(#metal)" stroke="#fbffe8" stroke-width="{1 / k:.0f}"',
@@ -364,8 +364,8 @@ def hero() -> None:
     b(f'<g class="st-a"><circle cx="{NX + 5}" cy="{SY - 4}" r="4" fill="{G["neon"]}" class="pulse"/>'
       + d.text("生存 ALIVE", NX + 17, SY, 12.5, "mono-b", ls=1.5, attrs=fill(G["neon"]))
       + d.text("·  checkpoint saved", NX + 118, SY, 12, "mono", attrs=fill(G["mist"])) + "</g>")
-    b('<g class="st-d">' + d.text("✕ 死亡 DEAD", NX, SY, 12.5, "mono-b", ls=1.5, attrs=fill(C["shu"]))
-      + d.text("·  return_by_death() triggered", NX + 118, SY, 12, "mono", attrs=fill(C["sakura"])) + "</g>")
+    b('<g class="st-d">' + d.text("✕ 死亡 DEAD", NX, SY, 12.5, "mono-b", ls=1.5, attrs=fill(WITCH["glow"]))
+      + d.text("·  return_by_death() triggered", NX + 118, SY, 12, "mono", attrs=fill("#d9b8ff")) + "</g>")
     b('<g class="st-r">' + d.text("◆ 復帰 RESTORED", NX, SY, 12.5, "mono-b", ls=1.5, attrs=fill(G["acid"]))
       + d.text("·  back to the checkpoint, loop +1", NX + 140, SY, 12, "mono", attrs=fill(G["mist"])) + "</g>")
 
@@ -395,15 +395,17 @@ def hero() -> None:
         b(f'<g clip-path="url(#w-{cls})"><g class="{cls}" fill="{C["kinari"]}">{digits}</g></g>')
 
     # -- death: the Witch's hands, the seal, the rewind ----------------------------------
-    b(f'<rect width="{W}" height="{H}" fill="{C["shu"]}" class="flash"/>')
+    # the card sinks into a violet dark while the Witch's hands are out
+    b(f'<rect width="{W}" height="{H}" fill="{WITCH["dread"]}" class="dread"/>')
+    b(f'<rect width="{W}" height="{H}" fill="{WITCH["haze"]}" class="flash"/>')
     b(f'<rect width="{W}" height="{H}" fill="url(#vig)" class="vig"/>')
 
     # The Witch's Unseen Hands reach in from the card's edges toward the clock and
-    # the seal: solid silhouettes with clawed fingers, a violet rim and miasma.
+    # the name: solid silhouettes with clawed fingers, a violet rim and miasma.
     d.defs.append(WITCH_RIM + '<filter id="miasma" x="-60%" y="-60%" width="220%" height="220%">'
                   '<feGaussianBlur stdDeviation="14"/></filter>')
     # The wrist sits just inside the card, near an edge or corner; `ang` points
-    # the fingers inward (toward the clock, name or seal) with the forearm
+    # the fingers inward (toward the clock, name or tags) with the forearm
     # trailing the opposite way, straight out through that nearby edge — so a
     # clean stretch of arm is always visible between the wrist and the frame.
     # (wrist x, wrist y, angle, scale, mirrored, grip, reach distance in local units)
@@ -413,13 +415,12 @@ def hero() -> None:
             (480, 332, -90, 1.3, False, .65, 95),   # bottom edge → up toward the tags
             (935, 48, 135, 1.45, True, .55, 110),   # top-right corner → down-left toward the name
             (630, 42, 90, 1.1, False, .75, 90),     # top edge → down toward the tags
-            (935, 332, -135, 1.1, True, .6, 90))):  # bottom-right corner → up-left toward the seal
+            (935, 332, -135, 1.1, True, .6, 90))):  # bottom-right corner → up-left toward the name
         haze = (f'<g filter="url(#miasma)" opacity=".55"><ellipse cx="20" cy="0" rx="70" ry="34" fill="{WITCH["haze"]}"/>'
                 f'<ellipse cx="62" cy="0" rx="30" ry="26" fill="{WITCH["rim"]}" opacity=".5"/></g>')
         b(f'<g transform="translate({hx} {hy}) rotate({ang}) scale({sc} {-sc if mir else sc})">'
           f'<g class="wr" style="--r:-{reach}px;animation-delay:{i * .05:.2f}s">{haze}'
           f'<g filter="url(#wrim)" fill="{WITCH["body"]}">{hand(rng, grip)}</g></g></g>')
-    b(f'<g transform="translate(712 176) rotate(-9)"><g class="stamp"><g filter="url(#rough)">{seal(d, "死", 108, "brush")}</g></g></g>')
     b(f'<g class="rew"><rect width="{W}" height="{H}" fill="{G["neon"]}" fill-opacity=".05"/>'
       f'<rect x="22" y="336" width="186" height="26" rx="3" fill="{G["night"]}" fill-opacity=".85" stroke="{G["acid"]}" stroke-opacity=".5"/>'
       + d.text("«« 巻き戻し  REWIND", 34, 354, 12, "mono-b", ls=1.5, attrs=fill("#eef3dc")) + "</g>")
