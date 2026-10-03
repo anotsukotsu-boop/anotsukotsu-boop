@@ -381,11 +381,12 @@ def hand(rng: random.Random, grip: float = .6) -> str:
         _smooth_closed([(0, -14), (16, -19), (40, -21), (52, -13), (55, -1), (52, 12),
                         (44, 21), (24, 19), (0, 14)]),                                              # back of hand
     ]
-    for base, ang, lens, w in (((47, -14), -13, (25, 16, 12), 5.6), ((51, -4), -3, (28, 18, 13), 5.9),
-                               ((50, 6), 7, (26, 17, 12), 5.6), ((44, 15), 18, (20, 13, 10), 4.9)):
-        parts.append(_digit(base, ang + rng.uniform(-3, 3) + 6 * grip, [j(L) for L in lens], w,
+    # fingers fan out wide enough that their rounded tips never fuse when curled
+    for base, ang, lens, w in (((46, -16), -27, (25, 16, 12), 4.2), ((52, -5.5), -9, (28, 18, 13), 4.4),
+                               ((51, 6.5), 12, (26, 17, 12), 4.2), ((43, 17), 32, (20, 13, 10), 3.7)):
+        parts.append(_digit(base, ang + rng.uniform(-2, 2) + 6 * grip, [j(L) for L in lens], w,
                             [j(10 + 34 * grip), j(8 + 26 * grip)]))
-    parts.append(_digit((14, -14), -58 + rng.uniform(-4, 4), [18, 14, 10], 6.6,
+    parts.append(_digit((14, -14), -62 + rng.uniform(-4, 4), [18, 14, 10], 5.4,
                         [j(14 + 18 * grip), j(10 + 14 * grip)]))                                   # thumb
     return "".join(f'<path d="{d}"/>' for d in parts)
 
